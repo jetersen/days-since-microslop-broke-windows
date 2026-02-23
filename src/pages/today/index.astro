@@ -1,0 +1,34 @@
+---
+import { getCollection } from "astro:content";
+import TodayLayout from "../../layouts/TodayLayout.astro";
+import DaysCounter from "../../components/DaysCounter.astro";
+import Footer from "../../components/Footer.astro";
+
+const incidents = await getCollection("incidents");
+const sorted = incidents.sort(
+  (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+const latest = sorted[0];
+
+const incidentDate = new Date(latest.data.date);
+const incidentIso = incidentDate.toISOString().split("T")[0];
+
+const dateStr = incidentDate.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<TodayLayout
+  title="Did Microsoft Break Windows Today?"
+  description={`Tracking the days since Microsoft last broke Windows. Last incident: ${dateStr}.`}
+>
+  <DaysCounter
+    incidentDate={incidentIso}
+    lastIncidentTitle={latest.data.title}
+    lastIncidentDate={dateStr}
+    lastIncidentKb={latest.data.kb}
+  />
+  <Footer currentSite="today" />
+</TodayLayout>

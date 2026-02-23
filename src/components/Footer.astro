@@ -1,0 +1,47 @@
+---
+import { siteUrl } from "../links";
+
+interface Props {
+  currentSite: "today" | "archive";
+}
+
+const { currentSite } = Astro.props;
+---
+
+<footer>
+  {currentSite === "today" ? (
+    <a href={siteUrl("archive")}>View the full Wall of Shame &rarr;</a>
+  ) : (
+    <a href={siteUrl("today")}>Did they break it today? &rarr;</a>
+  )}
+  <p class="disclaimer">
+    A satirical project. Not affiliated with Microsoft.
+  </p>
+</footer>
+
+<style>
+  footer {
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  a {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  .disclaimer {
+    font-size: 0.75rem;
+    opacity: 0.6;
+  }
+</style>

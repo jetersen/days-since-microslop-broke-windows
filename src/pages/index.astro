@@ -1,0 +1,106 @@
+---
+import "../styles/global.css";
+import { siteUrl } from "../links";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Tracking Microsoft's Windows update disasters" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Days Since Microsoft Broke Windows</title>
+  </head>
+  <body>
+    <main>
+      <h1>Days Since Microsoft<br />Broke Windows</h1>
+      <p class="subtitle">Choose your experience:</p>
+      <nav>
+        <a href={siteUrl("today")} class="link-card">
+          <span class="label">Did they break it today?</span>
+          <span class="desc">The daily status check</span>
+        </a>
+        <a href={siteUrl("archive")} class="link-card">
+          <span class="label">The Wall of Shame</span>
+          <span class="desc">Full historical archive</span>
+        </a>
+      </nav>
+    </main>
+  </body>
+</html>
+
+<style>
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+  }
+
+  main {
+    text-align: center;
+    padding: 2rem;
+  }
+
+  h1 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 24rem;
+    margin: 0 auto;
+  }
+
+  .link-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-card);
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+
+  .link-card:hover {
+    border-color: var(--color-link);
+  }
+
+  .label {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .local-hint {
+    margin-top: 2rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    opacity: 0.5;
+  }
+
+  .local-hint a {
+    color: var(--color-link);
+  }
+</style>

@@ -1,0 +1,106 @@
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+/* Fonts */
+:root {
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Cascadia Code", "Fira Code", "JetBrains Mono", Consolas, "Courier New", monospace;
+}
+
+/* Light theme (default) */
+:root {
+  --bg: #fafaf9;
+  --bg-card: #ffffff;
+  --text: #1c1917;
+  --text-muted: #78716c;
+  --border: #e7e5e4;
+  --border-subtle: #f5f5f4;
+
+  /* Severity colors — tuned for light bg */
+  --color-safe: #16a34a;
+  --color-safe-bg: #f0fdf4;
+  --color-safe-glow: #bbf7d0;
+  --color-danger: #dc2626;
+  --color-danger-bg: #fef2f2;
+  --color-danger-glow: #fecaca;
+
+  --color-annoyance: #ca8a04;
+  --color-annoyance-bg: #fefce8;
+  --color-broken: #ea580c;
+  --color-broken-bg: #fff7ed;
+  --color-catastrophic: #dc2626;
+  --color-catastrophic-bg: #fef2f2;
+
+  --color-accent: #6d28d9;
+  --color-link: #2563eb;
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c0a09;
+    --bg-card: #1c1917;
+    --text: #e7e5e4;
+    --text-muted: #a8a29e;
+    --border: #292524;
+    --border-subtle: #1c1917;
+
+    --color-safe: #4ade80;
+    --color-safe-bg: #052e16;
+    --color-safe-glow: #166534;
+    --color-danger: #f87171;
+    --color-danger-bg: #450a0a;
+    --color-danger-glow: #991b1b;
+
+    --color-annoyance: #facc15;
+    --color-annoyance-bg: #422006;
+    --color-broken: #fb923c;
+    --color-broken-bg: #431407;
+    --color-catastrophic: #f87171;
+    --color-catastrophic-bg: #450a0a;
+
+    --color-accent: #a78bfa;
+    --color-link: #60a5fa;
+  }
+}
+
+/* Utility */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
