@@ -7,11 +7,10 @@ interface Props {
   affected: string[];
   fixed: boolean;
   fixDate?: Date;
-  body: string;
-  id: string;
+  sources?: string[];
 }
 
-const { title, date, kb, severity, affected, fixed, fixDate, body, id } = Astro.props;
+const { title, date, kb, severity, affected, fixed, fixDate, sources } = Astro.props;
 
 const severityLabels = {
   annoyance: "Annoyance",
@@ -51,7 +50,14 @@ const fixDateStr = fixDate?.toLocaleDateString("en-US", {
   <details>
     <summary>Details</summary>
     <div class="card-body">
-      <Fragment set:html={body} />
+      <slot />
+      {sources && sources.length > 0 && (
+        <ul class="sources">
+          {sources.map((url) => (
+            <li><a href={url} target="_blank" rel="noopener noreferrer">{new URL(url).hostname}</a></li>
+          ))}
+        </ul>
+      )}
     </div>
   </details>
 </article>
@@ -197,5 +203,33 @@ const fixDateStr = fixDate?.toLocaleDateString("en-US", {
 
   .card-body :global(a) {
     color: var(--color-link);
+  }
+
+  .sources {
+    list-style: none;
+    padding: 0;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .sources::before {
+    content: "Sources:";
+    font-weight: 600;
+    color: var(--text-muted);
+    width: 100%;
+  }
+
+  .sources a {
+    color: var(--color-link);
+    text-decoration: none;
+  }
+
+  .sources a:hover {
+    text-decoration: underline;
   }
 </style>

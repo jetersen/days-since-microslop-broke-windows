@@ -24,7 +24,7 @@ const catastrophicCount = incidents.filter(
 
 <ArchiveLayout
   title="The Windows Update Wall of Shame"
-  description={`${totalCount} documented incidents of Microsoft breaking Windows through updates. ${catastrophicCount} catastrophic.`}
+  description={`${totalCount} documented incidents of Microslop breaking Windows through updates. ${catastrophicCount} catastrophic.`}
 >
   <div class="archive">
     <header class="header">
@@ -38,9 +38,8 @@ const catastrophicCount = incidents.filter(
     </header>
 
     <div class="timeline">
-      {rendered.map(({ id, data, body }) => (
+      {rendered.map(({ data, Content }) => (
         <IncidentCard
-          id={id}
           title={data.title}
           date={data.date}
           kb={data.kb}
@@ -48,8 +47,10 @@ const catastrophicCount = incidents.filter(
           affected={data.affected}
           fixed={data.fixed}
           fixDate={data.fixDate}
-          body={body!}
-        />
+          sources={data.sources}
+        >
+          <Content />
+        </IncidentCard>
       ))}
     </div>
 
