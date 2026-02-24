@@ -23,13 +23,13 @@ jobs:
         run: |
           mkdir dist-today
           cp dist/today/index.html dist-today/index.html
-          cp -r dist/_astro dist-today/_astro
+          [ -d dist/_astro ] && cp -r dist/_astro dist-today/_astro || true
 
       - name: Prepare dist-archive
         run: |
           mkdir dist-archive
           cp dist/archive/index.html dist-archive/index.html
-          cp -r dist/_astro dist-archive/_astro
+          [ -d dist/_astro ] && cp -r dist/_astro dist-archive/_astro || true
 
       - name: Deploy today
         run: npx wrangler deploy --config wrangler.today.toml
