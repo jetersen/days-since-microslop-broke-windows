@@ -55,12 +55,10 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
   ];
 
   const page = document.querySelector<HTMLElement>(".page")!;
-  const [y, m, d] = page.dataset.incidentDate!.split("-").map(Number);
-  const incidentDate = new Date(y, m - 1, d);
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const diffMs = today.getTime() - incidentDate.getTime();
-  const days = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+  const incident = new Date(page.dataset.incidentDate + "T00:00:00");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const days = Math.max(0, Math.round((today.getTime() - incident.getTime()) / 86400000));
 
   // Hue: 0 (red) at 0 days → 120 (green) at 30+ days
   // Quadratic ease — stays redder longer
