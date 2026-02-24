@@ -1,0 +1,44 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Prepare dist-today
+        run: |
+          mkdir dist-today
+          cp dist/today/index.html dist-today/index.html
+          cp -r dist/_astro dist-today/_astro
+
+      - name: Prepare dist-archive
+        run: |
+          mkdir dist-archive
+          cp dist/archive/index.html dist-archive/index.html
+          cp -r dist/_astro dist-archive/_astro
+
+      - name: Deploy today
+        run: npx wrangler deploy --config wrangler.today.toml
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Deploy archive
+        run: npx wrangler deploy --config wrangler.archive.toml
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
