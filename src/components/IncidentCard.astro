@@ -38,7 +38,7 @@ const fixDateStr = fixDate?.toLocaleDateString("en-US", {
       {kb && <span class="kb">{kb}</span>}
       <span class={`badge severity-${severity}`}>{severityLabels[severity]}</span>
     </div>
-    <h3 class="card-title">{title}</h3>
+    <h2 class="card-title">{title}</h2>
     <div class="tags">
       {affected.map((tag) => <span class="tag">{tag}</span>)}
       {fixed
