@@ -12,7 +12,7 @@ const incidents = defineCollection({
     affected: z.array(z.string()),
     fixed: z.boolean().default(false),
     fixDate: z.coerce.date().optional(),
-    sources: z.array(z.string().url()).optional(),
+    sources: z.array(z.url()).optional(),
   }),
 });
 
