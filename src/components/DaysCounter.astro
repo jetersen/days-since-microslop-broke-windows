@@ -39,23 +39,13 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
 
 <script>
   const snarky = [
-    "A new record! Just kidding.",
-    "Don't get your hopes up.",
-    "Impressive, if true.",
+    "A new uptime record! Microsoft is investigating.",
     "The calm before the patch.",
-    "Enjoy it while it lasts.",
-    "Statistically unlikely to continue.",
     "Patch Tuesday is always coming.",
-    "Somewhere, an intern is being blamed.",
-    "Rebooting won't save you.",
-    "Your PC updated overnight. Good luck.",
     "Do not read the release notes.",
     "Certified working. For now.",
-    "Copilot says everything is fine.",
     "This streak was AI-generated.",
-    "Now with 40% more AI per update.",
-    "An AI reviewed this update. Briefly.",
-    "The patch-writing AI is on vacation.",
+    "The update contains more AI than release notes.",
     "Zero incidents detected. Sincerely, Copilot.",
     "Known issues: none. Trust us.",
     "Working as intended. Allegedly.",
@@ -66,26 +56,152 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
     "Telemetry says you're enjoying this.",
     "May contain traces of quality assurance.",
     "Clippy would never have allowed this.",
-    "This message was fact-checked by Copilot.",
     "Uptime is a preview feature.",
     "Insiders saw this coming. Nobody listened.",
+    "Microslop hasn't slopped. Yet.",
+    "Windows Update is respecting your boundaries today.",
+    "No known issues. Plenty of unknown ones.",
+    "The update button is thinking about it.",
+    "Your taskbar survived another sunrise.",
+    "All systems nominal-ish.",
+    "The blue screen is merely resting.",
+    "Windows is stable. Please don't startle it.",
+    "OneDrive has backed up your sense of dread.",
+    "The rollback partition remains optimistic.",
+    "Microsoft calls this a quality moment.",
+    "Your settings are still where you left them.",
+    "No emergency out-of-band patch. Suspicious.",
+    "The Start menu started. Huge if true.",
+    "Copilot couldn't find anything wrong. Adorable.",
+    "Copilot is summarizing your impending reboot.",
+    "Clippy never needed a cloud connection to interrupt you.",
+    "Copilot hallucinated a stable release channel.",
+    "Clippy never wanted your data. Just your letter.",
+    "The mascot is optional. The telemetry has tenure.",
+    "Mico changed color. We assume that's fine.",
+    "Mico is listening. Windows Update isn't.",
+    "Clippy was annoying, not emotionally available.",
+    "Mico is customizable. The forced reboot is not.",
+    "Defender is guarding the uptime with its life.",
+    "Mico nodded. Legal says that isn't a guarantee.",
+    "Windows Recall remembers when updates worked.",
+    "Mico supports you through animation, not tech support.",
+    "No news is good news. Or unacknowledged news.",
+    "Stability detected. Deploying remediation.",
+    "Microsoft is currently unable to reproduce the uptime.",
+    "Every quiet day is just update buffering.",
+    "Enjoy this unsupported level of stability.",
+    "Nothing broke. Telemetry is inconclusive.",
+    "Current status: ominously functional.",
+    "A fix has not yet required another fix.",
+    "The PC is fine. Mico looks nervous.",
+    "So far, so good. Never say that aloud.",
+    "The update history says 'Successful.' Bold claim.",
+    "Defender detected no threats from Windows Update.",
+    "The uptime counter is making Microsoft nervous.",
+    "Edge opened itself to celebrate.",
+    "Defender scanned the update. No comment.",
+    "Defender and Windows Update are maintaining a tense ceasefire.",
+    "BitLocker hasn't requested your recovery key. Cherish this.",
+    "Your recovery key is enjoying a well-earned day off.",
+    "Windows Security says no action is needed. Famous last words.",
+    "Defender's threat history is shorter than Windows Update's.",
+    "Clippy was retired before he had to explain this roadmap.",
+    "Clippy sees you're trying to keep Windows working.",
+    "The paperclip retired. The problems got promoted.",
+    "Copilot has drafted an apology, just in case.",
+    "Mico is here to make the error dialog feel natural.",
+    "Windows Update checked for updates and, for once, respected the answer.",
+    "The printer still works. Nobody touch anything.",
+    "Today's optional preview remains emotionally optional.",
+    "The uptime survived a meeting that could have been a reboot.",
+    "BitLocker remains calm. This is not legally binding.",
+    "Defender has nothing to report and would like to keep it that way.",
+    "Clippy only interrupted your work. He never summarized it.",
+    "Control Panel is still hiding somewhere safe.",
   ];
 
   const broken = [
-    "They did it again.",
     "Classic Microslop.",
-    "Surprised? Neither are we.",
-    "It was only a matter of time.",
-    "Another day, another disaster.",
-    "The AI wrote this patch all by itself.",
-    "Copilot approved this update.",
     "Vibe-coded, vibe-shipped, vibe-broken.",
     "Have you tried turning it off and— oh.",
     "Today's forecast: 100% chance of BSOD.",
     "Uninstall the update. You know the drill.",
     "Works on Microsoft's machines.",
-    "Your recovery key is in an email you deleted.",
     "QA said nothing. QA doesn't exist.",
+    "Microslop has entered the chat.",
+    "Freshly slopped, straight from Redmond.",
+    "Windows Update updated the definition of 'working.'",
+    "Mandatory update. Optional operating system.",
+    "Your PC has encountered a Microsoft.",
+    "The known issue is Windows Update.",
+    "Rollback is the new upgrade.",
+    "Another successful deployment to production users.",
+    "The Start menu has stopped participating.",
+    "Please wait while Windows uninstalls your afternoon.",
+    "Some settings were harmed during this update.",
+    "The fix is coming in a future broken update.",
+    "Copilot summarized the crash as 'unexpected.'",
+    "Clippy never stole your data. He just blocked the toolbar.",
+    "Clippy never required an account to be annoying.",
+    "Clippy was a paperclip, not a data pipeline.",
+    "Mico changed color to BitLocker blue.",
+    "Mico reacted. Your desktop didn't.",
+    "Defender has identified Windows Update as a trusted threat.",
+    "BitLocker recovery is the escape room nobody booked.",
+    "Mico's friendly animation survived the crash.",
+    "Mico is now displaying the five stages of rollback.",
+    "Mico made voice conversations natural. The BSOD stayed formal.",
+    "Mico would look concerned if Explorer could render it.",
+    "Expressive. Customizable. Currently not responding.",
+    "The update completed. Windows did not.",
+    "The update was mandatory. Competence was optional.",
+    "Good news: the ads still work.",
+    "Error 0xQA_NOT_FOUND.",
+    "Your PC has been Copiloted into a ditch.",
+    "The recovery environment needs recovery.",
+    "Reboot successful. Computer unavailable.",
+    "Features removed successfully.",
+    "Windows Recall remembers when this PC worked.",
+    "Mico is expressive because support isn't.",
+    "Copilot found no incidents in the provided context.",
+    "AI-powered. QA-optional.",
+    "Windows Update found a problem and installed it.",
+    "Microsoft Defender could not defend you from Microsoft.",
+    "BitLocker would like to see your paperwork.",
+    "Edge is still running. Priorities.",
+    "Update successful. Undoing changes.",
+    "Please contact your administrator. They are already crying.",
+    "The troubleshooter has detected that you need a troubleshooter.",
+    "Windows restored everything except your confidence.",
+    "Redmond, we have a problem. Redmond caused the problem.",
+    "The Update Catalog: where automatic updates become homework.",
+    "Windows has prepared a surprise restart.",
+    "Telemetry successfully recorded your suffering.",
+    "The optional preview was mandatory foreshadowing.",
+    "System Restore has entered witness protection.",
+    "Your driver has been volunteered as tribute.",
+    "Microsoft Support recommends Microsoft Support.",
+    "The patch notes now include your missing afternoon.",
+    "Installing updates: 100%. Regretting updates: 100%.",
+    "Rebooting won't save you.",
+    "Your PC updated overnight. Good luck.",
+    "Defender protected Windows from everything except Windows Update.",
+    "Defender quarantined the symptoms. The update remains at large.",
+    "BitLocker would like the 48-digit number you definitely memorized.",
+    "BitLocker has converted your laptop into a very secure paperweight.",
+    "Clippy sees you're trying to recover Windows. Would you like false hope?",
+    "Clippy has detected a problem with your operating system. Finally, useful.",
+    "Mico turned blue. So did Windows.",
+    "Copilot generated a recovery key. It looks very confident.",
+    "Your recovery key is in an email you deleted.",
+    "Windows Hello. Windows goodbye.",
+    "Your default app settings have been returned to Microsoft.",
+    "The progress bar reached 100%. The problem is just getting started.",
+    "The update fixed the bug that was preventing the other bug.",
+    "Control Panel saw what Settings became and retired.",
+    "Defender found the threat. It came through Windows Update.",
+    "BitLocker secured your files from unauthorized users. You count.",
   ];
 
   const page = document.querySelector<HTMLElement>(".page")!;
@@ -106,11 +222,59 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
   page.style.setProperty("--hue", String(hue));
   if (freshlyBroken) page.classList.add("broken");
 
-  const pick = (lines: string[]) => lines[Math.floor(Math.random() * lines.length)];
+  const shuffle = (lines: string[]) => {
+    const bag = [...lines];
+
+    // Fisher-Yates gives every ordering an equal chance, regardless of how the
+    // messages happen to be arranged in this file.
+    for (let i = bag.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [bag[i], bag[j]] = [bag[j], bag[i]];
+    }
+
+    return bag;
+  };
+
+  const pick = (lines: string[], pool: "broken" | "snarky") => {
+    const fallback = () => lines[Math.floor(Math.random() * lines.length)];
+
+    try {
+      // Keep a shuffled deck in localStorage so every line is shown once
+      // before any line repeats. Including the pool size resets the deck when
+      // new messages are added.
+      const bagKey = `microslop-message-bag:${pool}:${lines.length}`;
+      const lastKey = `microslop-message-last:${pool}`;
+      const stored = JSON.parse(localStorage.getItem(bagKey) ?? "[]");
+      let bag: string[] =
+        Array.isArray(stored) && stored.every((line) => typeof line === "string" && lines.includes(line))
+          ? stored
+          : [];
+
+      if (bag.length === 0) {
+        bag = shuffle(lines);
+        const last = localStorage.getItem(lastKey);
+
+        // The end of one deck and the start of the next must not match.
+        if (bag.length > 1 && bag.at(-1) === last) {
+          const swapIndex = bag.findIndex((line) => line !== last);
+          [bag[swapIndex], bag[bag.length - 1]] = [bag[bag.length - 1], bag[swapIndex]];
+        }
+      }
+
+      const selected = bag.pop() ?? fallback();
+      localStorage.setItem(bagKey, JSON.stringify(bag));
+      localStorage.setItem(lastKey, selected);
+      return selected;
+    } catch {
+      // Storage can be unavailable in strict privacy modes; random selection
+      // is still a perfectly good fallback.
+      return fallback();
+    }
+  };
 
   page.querySelector("[data-counter]")!.textContent = String(days);
   page.querySelector("[data-subtitle]")!.textContent =
-    freshlyBroken ? pick(broken) : pick(snarky);
+    freshlyBroken ? pick(broken, "broken") : pick(snarky, "snarky");
 </script>
 
 <style>
