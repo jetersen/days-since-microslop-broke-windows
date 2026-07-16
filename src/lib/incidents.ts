@@ -5,6 +5,12 @@ type Incident = CollectionEntry<"incidents">;
 
 const ARCHIVE_ORIGIN = "https://microslopbroke.win";
 
+export const severityLabels = {
+  annoyance: "Annoyance",
+  broken: "Broken",
+  catastrophic: "Catastrophic",
+} as const;
+
 function normalizeSlug(value: string): string {
   return value
     .toLowerCase()

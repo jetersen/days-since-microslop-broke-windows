@@ -9,6 +9,7 @@ import {
   incidentPath,
   incidentSlug,
   relatedIncidents,
+  severityLabels,
   sourceLabel,
 } from "@/lib/incidents";
 import {
@@ -86,12 +87,6 @@ const subject = data.kb ? `${data.kb} problems` : "Windows update problems";
 const pageTitle = `${subject}: ${data.title} | Microslop Broke Windows`;
 const description = `${data.kb ? `${data.kb}: ` : ""}${data.title}. Affected: ${data.affected.join(", ")}. Status: ${data.fixed ? "fixed" : "unfixed"}.`;
 
-const severityLabels = {
-  annoyance: "Annoyance",
-  broken: "Broken",
-  catastrophic: "Catastrophic",
-};
-
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -141,21 +136,21 @@ const jsonLd = {
     </nav>
 
     <article>
-      <header class={`incident-header severity-${data.severity}`}>
+      <header class="incident-header incident-surface severity-accent" data-severity={data.severity}>
         <div class="eyebrow">
           <time datetime={isoDate}>{displayDate}</time>
           {data.kb && <span>{data.kb}</span>}
-          <span class={`severity severity-${data.severity}`}>
+          <span class="incident-chip incident-label severity-badge">
             {severityLabels[data.severity]}
           </span>
         </div>
         <h1>{data.title}</h1>
-        <div class="tags" aria-label="Affected products and features">
+        <div class="tags incident-tags" aria-label="Affected products and features">
           {data.affected.map((item) =>
             linkedAffected.includes(taxonomySlug(item)) ? (
-              <a class="tag" href={archivePath(`affected/${taxonomySlug(item)}`)}>{item}</a>
+              <a class="incident-chip incident-tag" href={archivePath(`affected/${taxonomySlug(item)}`)}>{item}</a>
             ) : (
-              <span class="tag">{item}</span>
+              <span class="incident-chip incident-tag">{item}</span>
             )
           )}
         </div>
@@ -287,26 +282,9 @@ const jsonLd = {
 
   .incident-header {
     padding: clamp(1.25rem, 4vw, 2rem);
-    border: 1px solid var(--border);
-    border-left: 4px solid;
-    border-radius: 8px;
-    background: var(--bg-card);
   }
 
-  .incident-header.severity-annoyance {
-    border-left-color: var(--color-annoyance);
-  }
-
-  .incident-header.severity-broken {
-    border-left-color: var(--color-broken);
-  }
-
-  .incident-header.severity-catastrophic {
-    border-left-color: var(--color-catastrophic);
-  }
-
-  .eyebrow,
-  .tags {
+  .eyebrow {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -328,50 +306,6 @@ const jsonLd = {
 
   .tags {
     margin-top: 1rem;
-  }
-
-  .tag,
-  .severity {
-    display: inline-block;
-    padding: 0.1em 0.5em;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    font-size: 0.75rem;
-  }
-
-  .tag {
-    background: var(--border-subtle);
-    color: var(--text-muted);
-  }
-
-  a.tag {
-    text-decoration: none;
-  }
-
-  a.tag:hover {
-    border-color: var(--color-link);
-    color: var(--color-link);
-  }
-
-  .severity {
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  .severity.severity-annoyance {
-    color: var(--color-annoyance);
-    background: var(--color-annoyance-bg);
-  }
-
-  .severity.severity-broken {
-    color: var(--color-broken);
-    background: var(--color-broken-bg);
-  }
-
-  .severity.severity-catastrophic {
-    color: var(--color-catastrophic);
-    background: var(--color-catastrophic-bg);
   }
 
   .content-section {

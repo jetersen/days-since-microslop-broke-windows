@@ -31,6 +31,99 @@ a {
   color: inherit;
 }
 
+/* Shared incident severity treatment */
+[data-severity="annoyance"] {
+  --severity-color: var(--color-annoyance);
+  --severity-background: var(--color-annoyance-bg);
+}
+
+[data-severity="broken"] {
+  --severity-color: var(--color-broken);
+  --severity-background: var(--color-broken-bg);
+}
+
+[data-severity="catastrophic"] {
+  --severity-color: var(--color-catastrophic);
+  --severity-background: var(--color-catastrophic-bg);
+}
+
+.severity-accent {
+  border-left-color: var(--severity-color);
+}
+
+.severity-badge {
+  color: var(--severity-color);
+  background: var(--severity-background);
+}
+
+.incident-surface {
+  border: 1px solid var(--border);
+  border-left: 4px solid transparent;
+  border-radius: 8px;
+  background: var(--bg-card);
+}
+
+.incident-chip {
+  display: inline-block;
+  padding: 0.1em 0.5em;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.incident-label {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.incident-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.incident-tag {
+  background: var(--border-subtle);
+  color: var(--text-muted);
+}
+
+a.incident-tag {
+  text-decoration: none;
+}
+
+a.incident-tag:hover {
+  color: var(--color-link);
+  border-color: var(--color-link);
+}
+
+[data-status="fixed"] {
+  --status-color: var(--color-safe);
+  --status-background: var(--color-safe-bg);
+}
+
+[data-status="unfixed"] {
+  --status-color: var(--color-danger);
+  --status-background: var(--color-danger-bg);
+}
+
+.status-badge {
+  color: var(--status-color);
+  border-color: var(--status-color);
+  background: var(--status-background);
+}
+
+.incident-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.incident-title-link:hover {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
 /* Fonts */
 :root {
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
