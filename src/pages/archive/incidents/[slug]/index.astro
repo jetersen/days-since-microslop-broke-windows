@@ -3,7 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import { getCollection, render } from "astro:content";
 import Footer from "@/components/Footer.astro";
 import ArchiveLayout from "@/layouts/ArchiveLayout.astro";
-import { siteUrl } from "@/links";
+import { archivePath, siteUrl } from "@/links";
 import {
   incidentCanonicalUrl,
   incidentPath,
@@ -11,7 +11,10 @@ import {
   relatedIncidents,
   sourceLabel,
 } from "@/lib/incidents";
-import { incidentGitLastModified } from "@/lib/git-dates";
+import {
+  incidentGitFirstPublished,
+  incidentGitLastModified,
+} from "@/lib/git-dates";
 import { taxonomySlug } from "@/lib/taxonomies";
 
 type Incident = CollectionEntry<"incidents">;
@@ -68,6 +71,7 @@ const contentFilename = incident.id.endsWith(".md")
   : `${incident.id}.md`;
 const contentPath = `src/content/incidents/${contentFilename}`;
 const gitModifiedDate = incidentGitLastModified(contentPath);
+const gitPublishedDate = incidentGitFirstPublished(contentPath);
 const isoModifiedDate =
   gitModifiedDate ?? (data.fixDate ?? data.date).toISOString();
 const displayModifiedDate = new Date(isoModifiedDate).toLocaleDateString(
@@ -93,7 +97,7 @@ const jsonLd = {
   "@type": "Article",
   headline: data.kb ? `${data.kb}: ${data.title}` : data.title,
   description,
-  datePublished: isoDate,
+  ...(gitPublishedDate && { datePublished: gitPublishedDate }),
   dateModified: isoModifiedDate,
   mainEntityOfPage: canonicalUrl,
   url: canonicalUrl,
@@ -149,7 +153,7 @@ const jsonLd = {
         <div class="tags" aria-label="Affected products and features">
           {data.affected.map((item) =>
             linkedAffected.includes(taxonomySlug(item)) ? (
-              <a class="tag" href={`/affected/${taxonomySlug(item)}/`}>{item}</a>
+              <a class="tag" href={archivePath(`affected/${taxonomySlug(item)}`)}>{item}</a>
             ) : (
               <span class="tag">{item}</span>
             )
@@ -176,7 +180,7 @@ const jsonLd = {
             <dd>
               <time datetime={isoDate}>{displayDate}</time>
               {" · "}
-              <a href={`/years/${data.date.getUTCFullYear()}/`}>Browse that year</a>
+              <a href={archivePath(`years/${data.date.getUTCFullYear()}`)}>Browse that year</a>
             </dd>
           </div>
           <div>

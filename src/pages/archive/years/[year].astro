@@ -5,6 +5,7 @@ import Footer from "@/components/Footer.astro";
 import TaxonomyIncidentList from "@/components/TaxonomyIncidentList.astro";
 import ArchiveLayout from "@/layouts/ArchiveLayout.astro";
 import { taxonomySlug } from "@/lib/taxonomies";
+import { archivePath } from "@/links";
 
 export async function getStaticPaths() {
   const incidents = await getCollection("incidents");
@@ -74,7 +75,7 @@ const canonicalUrl = `https://microslopbroke.win/years/${year}/`;
 <ArchiveLayout title={title} description={description} canonicalUrl={canonicalUrl}>
   <main class="landing">
     <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <a href="/">Archive</a><span aria-hidden="true">/</span><span>{year}</span>
+      <a href={archivePath()}>Archive</a><span aria-hidden="true">/</span><span>{year}</span>
     </nav>
 
     <header>
@@ -92,7 +93,7 @@ const canonicalUrl = `https://microslopbroke.win/years/${year}/`;
 
     <nav class="years" aria-label="Browse incidents by year">
       {allYears.map((item) => (
-        <a href={`/years/${item}/`} aria-current={item === year ? "page" : undefined}>
+        <a href={archivePath(`years/${item}`)} aria-current={item === year ? "page" : undefined}>
           {item}
         </a>
       ))}
@@ -103,7 +104,7 @@ const canonicalUrl = `https://microslopbroke.win/years/${year}/`;
         <h2 id="component-heading">Frequently affected in {year}</h2>
         <ul>
           {popularAffected.map(([slug, item]) => (
-            <li><a href={`/affected/${slug}/`}>{item.label} <span>{item.count}</span></a></li>
+            <li><a href={archivePath(`affected/${slug}`)}>{item.label} <span>{item.count}</span></a></li>
           ))}
         </ul>
       </section>

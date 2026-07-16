@@ -5,6 +5,7 @@ import Footer from "@/components/Footer.astro";
 import TaxonomyIncidentList from "@/components/TaxonomyIncidentList.astro";
 import ArchiveLayout from "@/layouts/ArchiveLayout.astro";
 import { taxonomySlug } from "@/lib/taxonomies";
+import { archivePath } from "@/links";
 
 export async function getStaticPaths() {
   const incidents = await getCollection("incidents");
@@ -73,7 +74,7 @@ const canonicalUrl = `https://microslopbroke.win/affected/${Astro.params.compone
 <ArchiveLayout title={title} description={description} canonicalUrl={canonicalUrl}>
   <main class="landing">
     <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <a href="/">Archive</a><span aria-hidden="true">/</span><span>Affected</span>
+      <a href={archivePath()}>Archive</a><span aria-hidden="true">/</span><span>Affected</span>
       <span aria-hidden="true">/</span><span>{label}</span>
     </nav>
 
@@ -93,7 +94,7 @@ const canonicalUrl = `https://microslopbroke.win/affected/${Astro.params.compone
     <section class="year-nav" aria-labelledby="year-heading">
       <h2 id="year-heading">Browse those years</h2>
       <nav aria-label={`Years with ${label} incidents`}>
-        {years.map((year) => <a href={`/years/${year}/`}>{year}</a>)}
+        {years.map((year) => <a href={archivePath(`years/${year}`)}>{year}</a>)}
       </nav>
     </section>
 
@@ -111,7 +112,7 @@ const canonicalUrl = `https://microslopbroke.win/affected/${Astro.params.compone
         {componentNav.map((component) => (
           <li>
             <a
-              href={`/affected/${component.slug}/`}
+              href={archivePath(`affected/${component.slug}`)}
               aria-current={component.label === label ? "page" : undefined}
             >
               {component.label} <span>{component.count}</span>

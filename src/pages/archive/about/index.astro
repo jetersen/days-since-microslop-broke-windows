@@ -1,6 +1,7 @@
 ---
 import ArchiveLayout from "@/layouts/ArchiveLayout.astro";
 import Footer from "@/components/Footer.astro";
+import { archivePath } from "@/links";
 
 const title = "About the Windows Update Incident Archive";
 const description =
@@ -37,7 +38,7 @@ const jsonLd = {
 >
   <main class="about">
     <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/">&larr; Windows Update incident archive</a>
+      <a href={archivePath()}>&larr; Windows Update incident archive</a>
     </nav>
 
     <header class="page-header">

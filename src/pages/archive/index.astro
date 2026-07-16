@@ -4,6 +4,7 @@ import ArchiveLayout from "@/layouts/ArchiveLayout.astro";
 import IncidentCard from "@/components/IncidentCard.astro";
 import Footer from "@/components/Footer.astro";
 import { incidentPath } from "@/lib/incidents";
+import { archivePath } from "@/links";
 
 const incidents = await getCollection("incidents");
 const sorted = incidents.sort(
@@ -65,8 +66,8 @@ const jsonLd = [
         components, fix status, and supporting sources.
       </p>
       <nav class="archive-nav" aria-label="Browse the archive">
-        {years.map((year) => <a href={`/years/${year}/`}>{year}</a>)}
-        <a href="/about/">Methodology</a>
+        {years.map((year) => <a href={archivePath(`years/${year}`)}>{year}</a>)}
+        <a href={archivePath("about")}>Methodology</a>
       </nav>
     </header>
 

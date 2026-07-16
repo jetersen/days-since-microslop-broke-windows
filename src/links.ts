@@ -11,3 +11,9 @@ const paths = {
 export function siteUrl(site: "today" | "archive"): string {
   return import.meta.env.DEV ? paths[site] : domains[site];
 }
+
+export function archivePath(path = ""): string {
+  const suffix = path.replace(/^\/+|\/+$/g, "");
+  const base = import.meta.env.DEV ? paths.archive : "/";
+  return suffix ? `${base}${suffix}/` : base;
+}

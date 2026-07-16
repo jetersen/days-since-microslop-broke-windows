@@ -1,5 +1,5 @@
 ---
-import { siteUrl } from "@/links";
+import { archivePath, siteUrl } from "@/links";
 
 interface Props {
   currentSite: "today" | "archive";
@@ -14,7 +14,7 @@ const { currentSite } = Astro.props;
   ) : (
     <a href={siteUrl("today")}>Did they break it today? &rarr;</a>
   )}
-  {currentSite === "archive" && <a href="/about/">About and methodology</a>}
+  {currentSite === "archive" && <a href={archivePath("about")}>About and methodology</a>}
   <p class="disclaimer">
     A satirical project. Not affiliated with Microsoft.
   </p>

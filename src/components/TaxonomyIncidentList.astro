@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import { incidentPath } from "@/lib/incidents";
 import { taxonomySlug } from "@/lib/taxonomies";
+import { archivePath } from "@/links";
 
 interface Props {
   incidents: CollectionEntry<"incidents">[];
@@ -47,7 +48,7 @@ const severityLabels = {
               return (
                 <li>
                   {affectedLinks.has(slug)
-                    ? <a href={`/affected/${slug}/`}>{tag}</a>
+                    ? <a href={archivePath(`affected/${slug}`)}>{tag}</a>
                     : <span>{tag}</span>}
                 </li>
               );

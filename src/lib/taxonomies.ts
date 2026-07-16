@@ -5,4 +5,3 @@ export function taxonomySlug(value: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 }
-
