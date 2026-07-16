@@ -37,7 +37,25 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
   </div>
 </main>
 
-<script>
+<script is:inline>
+  {
+    // The counter affects the primary visual, so calculate it before first paint
+    // and before parsing the larger message deck below.
+    const page = document.querySelector(".page");
+    const incident = new Date(`${page.dataset.incidentDate}T00:00:00`);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const days = Math.max(0, Math.round((today.getTime() - incident.getTime()) / 86400000));
+    const hue = Math.round(Math.min(days / 30, 1) ** 2 * 120);
+
+    page.style.setProperty("--hue", String(hue));
+    if (days <= 7) page.classList.add("broken");
+    page.querySelector("[data-counter]").textContent = String(days);
+  }
+</script>
+
+<script is:inline>
+  {
   const snarky = [
     "A new uptime record! Microsoft is investigating.",
     "The calm before the patch.",
@@ -204,25 +222,10 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
     "BitLocker secured your files from unauthorized users. You count.",
   ];
 
-  const page = document.querySelector<HTMLElement>(".page")!;
-  const incident = new Date(page.dataset.incidentDate + "T00:00:00");
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const days = Math.max(0, Math.round((today.getTime() - incident.getTime()) / 86400000));
+  const page = document.querySelector(".page");
+  const freshlyBroken = page.classList.contains("broken");
 
-  // Hue: 0 (red) at 0 days → 120 (green) at 30+ days
-  // Quadratic ease — stays redder longer
-  const t = Math.min(days / 30, 1);
-  const hue = Math.round(t * t * 120);
-
-  // Breakage rarely makes the news same-day, so treat the first week
-  // after an incident as freshly broken
-  const freshlyBroken = days <= 7;
-
-  page.style.setProperty("--hue", String(hue));
-  if (freshlyBroken) page.classList.add("broken");
-
-  const shuffle = (lines: string[]) => {
+  const shuffle = (lines) => {
     const bag = [...lines];
 
     // Fisher-Yates gives every ordering an equal chance, regardless of how the
@@ -235,7 +238,7 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
     return bag;
   };
 
-  const pick = (lines: string[], pool: "broken" | "snarky") => {
+  const pick = (lines, pool) => {
     const fallback = () => lines[Math.floor(Math.random() * lines.length)];
 
     try {
@@ -245,7 +248,7 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
       const bagKey = `microslop-message-bag:${pool}:${lines.length}`;
       const lastKey = `microslop-message-last:${pool}`;
       const stored = JSON.parse(localStorage.getItem(bagKey) ?? "[]");
-      let bag: string[] =
+      let bag =
         Array.isArray(stored) && stored.every((line) => typeof line === "string" && lines.includes(line))
           ? stored
           : [];
@@ -272,9 +275,9 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
     }
   };
 
-  page.querySelector("[data-counter]")!.textContent = String(days);
-  page.querySelector("[data-subtitle]")!.textContent =
+  page.querySelector("[data-subtitle]").textContent =
     freshlyBroken ? pick(broken, "broken") : pick(snarky, "snarky");
+  }
 </script>
 
 <style>
