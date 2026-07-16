@@ -1,43 +1,49 @@
-# Astro Starter Kit: Minimal
+# Days Since Microslop Broke Windows
 
-```sh
-npm create astro@latest -- --template minimal
+A satirical "days since the last workplace accident" counter — except the workplace is Windows Update and the accidents keep coming. The site tracks every Windows update that broke Windows in some way, with a running counter since the latest incident and a full archive going back to 2021.
+
+Titles are tongue-in-cheek; the facts underneath are real, sourced, and cross-checked against [Microsoft's release health dashboard](https://learn.microsoft.com/en-us/windows/release-health/).
+
+## Live sites
+
+One Astro build, two deployments:
+
+| Site | Content |
+| :--- | :--- |
+| [didmicroslopbreakwindows.today](https://didmicroslopbreakwindows.today) | The counter — days since the last incident |
+| [microslopbroke.win](https://microslopbroke.win) | The archive — every incident on record |
+
+Deployment happens automatically on push to `main` via GitHub Actions, which splits the build output and ships each site to Cloudflare Workers (`wrangler.today.toml` / `wrangler.archive.toml`).
+
+## How it works
+
+Incidents live in `src/content/incidents/` as one markdown file per incident (`YYYY-MM-DD-kbNNNNNNN.md`), validated by the zod schema in `src/content.config.ts`:
+
+```yaml
+---
+title: "Windows forgets how to turn off, laptops cook in bags"
+date: 2026-01-13
+kb: "KB5073455"
+severity: broken            # annoyance | broken | catastrophic
+affected: ["Shutdown", "Hibernation", "Sleep"]
+fixed: true
+fixDate: 2026-02-10
+sources:
+  - "https://..."
+---
+
+One paragraph describing what broke, factually and with sources.
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+See [CLAUDE.md](CLAUDE.md) for the full workflow of researching and adding new incidents.
 
-## 🚀 Project Structure
+## Development
 
-Inside of your Astro project, you'll see the following folders and files:
+Requires Node.js >= 22.12.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| Command | Action |
+| :--- | :--- |
+| `npm install` | Install dependencies |
+| `npm run dev` | Start dev server at `localhost:4321` |
+| `npm run build` | Build to `./dist/` |
+| `npm run preview` | Preview the build locally |
