@@ -25,7 +25,8 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
 
     <div class="last-incident">
       <p class="incident-meta">
-        Last incident: <time>{lastIncidentDate}</time>
+        <span>Last incident:</span>
+        <time>{lastIncidentDate}</time>
         {lastIncidentKb && <span class="kb">{lastIncidentKb}</span>}
       </p>
       <p class="incident-title">{lastIncidentTitle}</p>
@@ -194,6 +195,11 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
 
   .incident-meta {
     font-size: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0.35rem;
   }
 
   .kb {
