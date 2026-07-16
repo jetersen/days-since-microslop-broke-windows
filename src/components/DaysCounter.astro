@@ -45,6 +45,30 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
     "The calm before the patch.",
     "Enjoy it while it lasts.",
     "Statistically unlikely to continue.",
+    "Patch Tuesday is always coming.",
+    "Somewhere, an intern is being blamed.",
+    "Rebooting won't save you.",
+    "Your PC updated overnight. Good luck.",
+    "Do not read the release notes.",
+    "Certified working. For now.",
+    "Copilot says everything is fine.",
+    "This streak was AI-generated.",
+    "Now with 40% more AI per update.",
+    "An AI reviewed this update. Briefly.",
+    "The patch-writing AI is on vacation.",
+    "Zero incidents detected. Sincerely, Copilot.",
+    "Known issues: none. Trust us.",
+    "Working as intended. Allegedly.",
+    "It's not a bug, it's a preview feature.",
+    "Quality assured by the Insider Program.",
+    "Have you backed up your BitLocker key?",
+    "The next KB is already downloading.",
+    "Telemetry says you're enjoying this.",
+    "May contain traces of quality assurance.",
+    "Clippy would never have allowed this.",
+    "This message was fact-checked by Copilot.",
+    "Uptime is a preview feature.",
+    "Insiders saw this coming. Nobody listened.",
   ];
 
   const broken = [
@@ -53,6 +77,15 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
     "Surprised? Neither are we.",
     "It was only a matter of time.",
     "Another day, another disaster.",
+    "The AI wrote this patch all by itself.",
+    "Copilot approved this update.",
+    "Vibe-coded, vibe-shipped, vibe-broken.",
+    "Have you tried turning it off and— oh.",
+    "Today's forecast: 100% chance of BSOD.",
+    "Uninstall the update. You know the drill.",
+    "Works on Microsoft's machines.",
+    "Your recovery key is in an email you deleted.",
+    "QA said nothing. QA doesn't exist.",
   ];
 
   const page = document.querySelector<HTMLElement>(".page")!;
@@ -66,14 +99,18 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
   const t = Math.min(days / 30, 1);
   const hue = Math.round(t * t * 120);
 
+  // Breakage rarely makes the news same-day, so treat the first week
+  // after an incident as freshly broken
+  const freshlyBroken = days <= 7;
+
   page.style.setProperty("--hue", String(hue));
-  if (days === 0) page.classList.add("broken");
+  if (freshlyBroken) page.classList.add("broken");
+
+  const pick = (lines: string[]) => lines[Math.floor(Math.random() * lines.length)];
 
   page.querySelector("[data-counter]")!.textContent = String(days);
   page.querySelector("[data-subtitle]")!.textContent =
-    days === 0
-      ? broken[0]
-      : snarky[days % snarky.length];
+    freshlyBroken ? pick(broken) : pick(snarky);
 </script>
 
 <style>
