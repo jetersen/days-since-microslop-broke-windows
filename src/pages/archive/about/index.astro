@@ -1,0 +1,350 @@
+---
+import ArchiveLayout from "@/layouts/ArchiveLayout.astro";
+import Footer from "@/components/Footer.astro";
+
+const title = "About the Windows Update Incident Archive";
+const description =
+  "How the Windows Update incident archive selects, verifies, rates, sources, and corrects documented Windows update problems.";
+const canonicalUrl = "https://microslopbroke.win/about/";
+const repositoryUrl =
+  "https://github.com/jetersen/days-since-microslop-broke-windows";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  name: title,
+  description,
+  url: canonicalUrl,
+  isPartOf: {
+    "@type": "WebSite",
+    name: "Microslop Broke Windows",
+    url: "https://microslopbroke.win/",
+  },
+  mainEntity: {
+    "@type": "CreativeWork",
+    name: "Windows Update incident archive methodology",
+    description:
+      "A public methodology for selecting, verifying, classifying, and correcting Windows update incidents.",
+  },
+};
+---
+
+<ArchiveLayout
+  title={`${title} | Microslop Broke Windows`}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  jsonLd={jsonLd}
+>
+  <main class="about">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">&larr; Windows Update incident archive</a>
+    </nav>
+
+    <header class="page-header">
+      <p class="eyebrow">About this project</p>
+      <h1>Facts first.<br />Sarcasm second.</h1>
+      <p class="lede">
+        Microslop Broke Windows is a public, satirical archive of documented
+        problems caused by Windows updates. The jokes are editorial; the dates,
+        KB numbers, affected features, fix status, and underlying incidents are
+        intended to be factual and traceable to sources.
+      </p>
+    </header>
+
+    <article class="methodology">
+      <section aria-labelledby="purpose">
+        <h2 id="purpose">Purpose</h2>
+        <p>
+          The archive makes Windows update failures easier to find and compare.
+          It records the originating update, what broke, which systems or
+          features were affected, the severity of the impact, and whether a
+          resolution has been documented.
+        </p>
+        <p>
+          It is a historical reference, not a real-time service-status page or a
+          substitute for Microsoft support, release health documentation, tested
+          backups, or advice from your system administrator.
+        </p>
+      </section>
+
+      <section aria-labelledby="included">
+        <h2 id="included">What qualifies as an incident</h2>
+        <p>
+          An entry is included when credible reporting or primary documentation
+          ties a reproducible Windows problem to a specific update, servicing
+          change, or update-related rollout. Typical examples include:
+        </p>
+        <ul>
+          <li>boot failures, blue screens, recovery loops, and lockouts;</li>
+          <li>broken Windows features, drivers, networking, or applications;</li>
+          <li>updates that fail to install or prevent later updates;</li>
+          <li>serious regressions affecting performance, security, or data access;</li>
+          <li>
+            enterprise or hardware-specific failures with a documented trigger.
+          </li>
+        </ul>
+        <p>
+          A complaint, isolated forum post, or coincidental failure is not enough
+          on its own. The archive favors incidents with a named KB, a confirmed
+          rollout, multiple credible reports, or acknowledgement in Microsoft
+          documentation. The incident date is the date of the update that
+          introduced the problem, not necessarily the date the problem was
+          reported.
+        </p>
+      </section>
+
+      <section aria-labelledby="severity">
+        <h2 id="severity">Severity definitions</h2>
+        <dl class="severity-list">
+          <div class="severity annoyance">
+            <dt>Annoyance</dt>
+            <dd>
+              A cosmetic, minor, or limited regression that does not generally
+              stop the affected system or feature from doing its main job.
+            </dd>
+          </div>
+          <div class="severity broken">
+            <dt>Broken</dt>
+            <dd>
+              A feature, application, device, installation process, or important
+              workflow genuinely stops working or becomes materially unreliable.
+            </dd>
+          </div>
+          <div class="severity catastrophic">
+            <dt>Catastrophic</dt>
+            <dd>
+              The incident causes boot failures, blue screens, data loss,
+              lockouts, or similarly severe loss of access or operation.
+            </dd>
+          </div>
+        </dl>
+        <p>
+          Severity describes the documented impact, not how many people were
+          affected. A catastrophic failure can be limited to a particular model
+          or configuration and still be catastrophic for those machines.
+        </p>
+      </section>
+
+      <section aria-labelledby="verification">
+        <h2 id="verification">Sourcing and verification</h2>
+        <p>
+          Entries are researched from primary sources where available,
+          especially Microsoft Windows release health pages, support articles,
+          update history, and issue trackers. Reputable technical reporting is
+          used to establish impact, affected configurations, user-visible
+          symptoms, and timelines. Claims and KB attribution are cross-checked
+          before publication when the evidence permits.
+        </p>
+        <p>
+          Every incident page links to its supporting material. Sources can be
+          revised, moved, or corrected after publication, so readers should also
+          consult the linked primary documentation before making operational
+          decisions.
+        </p>
+      </section>
+
+      <section aria-labelledby="status">
+        <h2 id="status">Fix status</h2>
+        <p>
+          <strong>Fixed</strong> means the archive has a sourced resolution for
+          the documented incident, such as a later cumulative update, an
+          out-of-band patch, a servicing change, or another confirmed resolution.
+          Where known, the date shown is the date of that resolving change.
+        </p>
+        <p>
+          <strong>Unfixed</strong> means no complete resolution has been verified
+          for the incident as summarized. It does not prove that no workaround or
+          private fix exists, and status may lag new information. A mitigation,
+          compatibility hold, or workaround is not automatically treated as a
+          permanent fix.
+        </p>
+      </section>
+
+      <section aria-labelledby="corrections">
+        <h2 id="corrections">Corrections and transparency</h2>
+        <p>
+          The site content, incident records, and revision history are public in
+          the project’s{" "}
+          <a href={repositoryUrl}>GitHub repository</a>. To report an incorrect
+          date, KB number, severity, source, affected component, or fix status,
+          {" "}
+          <a href={`${repositoryUrl}/issues`}>open a GitHub issue</a> with a link
+          to supporting documentation. Pull requests with well-sourced
+          corrections are also welcome.
+        </p>
+        <p>
+          The repository is the authoritative record of who changed the archive
+          and when. This page makes no claim of institutional independence,
+          exhaustive coverage, or formal affiliation with any vendor.
+        </p>
+      </section>
+
+      <section class="disclaimer" aria-labelledby="satire">
+        <h2 id="satire">Satire disclaimer</h2>
+        <p>
+          “Microslop” and the Wall of Shame framing are satire. This project is
+          not affiliated with, endorsed by, or operated by Microsoft. Microsoft,
+          Windows, and related product names are trademarks of their respective
+          owners. Humor may color the phrasing, but it must not invent or
+          exaggerate the underlying facts.
+        </p>
+      </section>
+    </article>
+  </main>
+
+  <Footer currentSite="archive" />
+</ArchiveLayout>
+
+<style>
+  .about {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .breadcrumb {
+    margin-bottom: 2rem;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+  }
+
+  .breadcrumb a,
+  .methodology a {
+    color: var(--color-link);
+    text-underline-offset: 0.18em;
+  }
+
+  .breadcrumb a {
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .page-header {
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .eyebrow {
+    margin-bottom: 0.6rem;
+    color: var(--color-danger);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 7vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    line-height: 1.05;
+  }
+
+  .lede {
+    max-width: 43rem;
+    margin-top: 1.25rem;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
+    line-height: 1.75;
+  }
+
+  .methodology {
+    font-family: var(--font-sans);
+  }
+
+  section {
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  section:last-child {
+    border-bottom: 0;
+  }
+
+  h2 {
+    margin-bottom: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+
+  p + p,
+  ul + p {
+    margin-top: 1rem;
+  }
+
+  ul {
+    margin: 1rem 0 0 1.25rem;
+  }
+
+  li {
+    padding-left: 0.35rem;
+  }
+
+  li + li {
+    margin-top: 0.35rem;
+  }
+
+  .severity-list {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+
+  .severity {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-left-width: 4px;
+    border-radius: 0.35rem;
+    background: var(--bg-card);
+  }
+
+  .severity.annoyance {
+    border-left-color: var(--color-annoyance);
+  }
+
+  .severity.broken {
+    border-left-color: var(--color-broken);
+  }
+
+  .severity.catastrophic {
+    border-left-color: var(--color-catastrophic);
+  }
+
+  dt {
+    margin-bottom: 0.25rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+
+  dd {
+    color: var(--text-muted);
+  }
+
+  .disclaimer {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.35rem;
+    background: var(--bg-card);
+  }
+
+  .disclaimer h2 {
+    color: var(--color-danger);
+  }
+
+  @media (max-width: 36rem) {
+    .about {
+      padding: 1.25rem 1rem;
+    }
+
+    .disclaimer {
+      padding: 1.1rem;
+    }
+  }
+</style>

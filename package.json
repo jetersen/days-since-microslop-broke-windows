@@ -8,10 +8,14 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "sources:check": "node scripts/check-sources.ts",
+    "sources:dedup": "node scripts/dedup-sources.ts",
+    "sources:fix-newlines": "node scripts/fix-final-newline.ts",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.0.9",
     "astro-compress": "^2.4.1"
   }

@@ -9,6 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          # Sitemap lastmod values are derived from each incident file's most
+          # recent commit, which requires more than a shallow checkout.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v6
         with:
@@ -18,40 +22,6 @@ jobs:
       - run: npm ci
 
       - run: npm run build
-
-      - name: Prepare dist-today
-        run: |
-          mkdir dist-today
-          cp dist/today/index.html dist-today/index.html
-          [ -d dist/_astro ] && cp -r dist/_astro dist-today/_astro || true
-          cp dist/robots.txt dist-today/robots.txt
-          echo "Sitemap: https://didmicroslopbreakwindows.today/sitemap.xml" >> dist-today/robots.txt
-          cat <<EOF > dist-today/sitemap.xml
-          <?xml version="1.0" encoding="UTF-8"?>
-          <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-            <url>
-              <loc>https://didmicroslopbreakwindows.today/</loc>
-              <lastmod>$(date -u +%Y-%m-%d)</lastmod>
-            </url>
-          </urlset>
-          EOF
-
-      - name: Prepare dist-archive
-        run: |
-          mkdir dist-archive
-          cp dist/archive/index.html dist-archive/index.html
-          [ -d dist/_astro ] && cp -r dist/_astro dist-archive/_astro || true
-          cp dist/robots.txt dist-archive/robots.txt
-          echo "Sitemap: https://microslopbroke.win/sitemap.xml" >> dist-archive/robots.txt
-          cat <<EOF > dist-archive/sitemap.xml
-          <?xml version="1.0" encoding="UTF-8"?>
-          <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-            <url>
-              <loc>https://microslopbroke.win/</loc>
-              <lastmod>$(date -u +%Y-%m-%d)</lastmod>
-            </url>
-          </urlset>
-          EOF
 
       - name: Deploy today
         run: npx wrangler deploy --config wrangler.today.toml

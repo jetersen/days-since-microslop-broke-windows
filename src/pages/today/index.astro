@@ -1,8 +1,8 @@
 ---
 import { getCollection } from "astro:content";
-import TodayLayout from "../../layouts/TodayLayout.astro";
-import DaysCounter from "../../components/DaysCounter.astro";
-import Footer from "../../components/Footer.astro";
+import TodayLayout from "@/layouts/TodayLayout.astro";
+import DaysCounter from "@/components/DaysCounter.astro";
+import Footer from "@/components/Footer.astro";
 
 const incidents = await getCollection("incidents");
 const sorted = incidents.sort(
@@ -18,11 +18,27 @@ const dateStr = incidentDate.toLocaleDateString("en-US", {
   month: "long",
   day: "numeric",
 });
+const canonicalUrl = "https://didmicroslopbreakwindows.today/";
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Did Microslop Break Windows Today?",
+  alternateName: "Days Since Microslop Broke Windows",
+  url: canonicalUrl,
+  description: `Tracking the days since the last documented Windows update incident. Last incident: ${dateStr}.`,
+  isPartOf: {
+    "@type": "WebSite",
+    name: "Microslop Broke Windows",
+    url: "https://microslopbroke.win/",
+  },
+};
 ---
 
 <TodayLayout
   title="Did Microslop Break Windows Today?"
   description={`Tracking the days since Microslop last broke Windows. Last incident: ${dateStr}.`}
+  canonicalUrl={canonicalUrl}
+  jsonLd={jsonLd}
 >
   <DaysCounter
     incidentDate={incidentIso}

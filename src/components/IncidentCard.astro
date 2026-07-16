@@ -8,9 +8,22 @@ interface Props {
   fixed: boolean;
   fixDate?: Date;
   sources?: string[];
+  href?: string;
+  sourceLabels?: string[];
 }
 
-const { title, date, kb, severity, affected, fixed, fixDate, sources } = Astro.props;
+const {
+  title,
+  date,
+  kb,
+  severity,
+  affected,
+  fixed,
+  fixDate,
+  sources,
+  href,
+  sourceLabels,
+} = Astro.props;
 
 const severityLabels = {
   annoyance: "Annoyance",
@@ -38,7 +51,9 @@ const fixDateStr = fixDate?.toLocaleDateString("en-US", {
       {kb && <span class="kb">{kb}</span>}
       <span class={`badge severity-${severity}`}>{severityLabels[severity]}</span>
     </div>
-    <h2 class="card-title">{title}</h2>
+    <h2 class="card-title">
+      {href ? <a href={href}>{title}</a> : title}
+    </h2>
     <div class="tags">
       {affected.map((tag) => <span class="tag">{tag}</span>)}
       {fixed
@@ -47,19 +62,23 @@ const fixDateStr = fixDate?.toLocaleDateString("en-US", {
       }
     </div>
   </div>
-  <details>
-    <summary>Details</summary>
-    <div class="card-body">
-      <slot />
-      {sources && sources.length > 0 && (
-        <ul class="sources">
-          {sources.map((url) => (
-            <li><a href={url} target="_blank" rel="noopener noreferrer">{new URL(url).hostname}</a></li>
-          ))}
-        </ul>
-      )}
-    </div>
-  </details>
+  {href ? (
+    <a class="details-link" href={href}>Full incident, fix status, and sources &rarr;</a>
+  ) : (
+    <details>
+      <summary>Details</summary>
+      <div class="card-body">
+        <slot />
+        {sources && sources.length > 0 && (
+          <ul class="sources">
+            {sources.map((url, index) => (
+              <li><a href={url} target="_blank" rel="noopener noreferrer">{sourceLabels?.[index] ?? new URL(url).hostname}</a></li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </details>
+  )}
 </article>
 
 <style>
@@ -141,6 +160,17 @@ const fixDateStr = fixDate?.toLocaleDateString("en-US", {
     line-height: 1.3;
   }
 
+  .card-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .card-title a:hover {
+    color: var(--color-link);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
   .tags {
     display: flex;
     flex-wrap: wrap;
@@ -181,6 +211,18 @@ const fixDateStr = fixDate?.toLocaleDateString("en-US", {
   }
 
   summary:hover {
+    text-decoration: underline;
+  }
+
+  .details-link {
+    display: inline-block;
+    margin-top: 0.75rem;
+    color: var(--color-link);
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+
+  .details-link:hover {
     text-decoration: underline;
   }
 

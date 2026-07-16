@@ -1,0 +1,180 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { incidentPath } from "@/lib/incidents";
+import { taxonomySlug } from "@/lib/taxonomies";
+
+interface Props {
+  incidents: CollectionEntry<"incidents">[];
+  linkedAffected: string[];
+}
+
+const { incidents, linkedAffected } = Astro.props;
+const affectedLinks = new Set(linkedAffected);
+
+const severityLabels = {
+  annoyance: "Annoyance",
+  broken: "Broken",
+  catastrophic: "Catastrophic",
+};
+---
+
+<ol class="incident-list">
+  {incidents.map((incident) => {
+    const { data } = incident;
+    const date = data.date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+
+    return (
+      <li class={`incident severity-${data.severity}`}>
+        <article>
+          <div class="meta">
+            <time datetime={data.date.toISOString().slice(0, 10)}>{date}</time>
+            {data.kb && <span>{data.kb}</span>}
+            <span class={`severity severity-${data.severity}`}>
+              {severityLabels[data.severity]}
+            </span>
+            <span class={data.fixed ? "status fixed" : "status unfixed"}>
+              {data.fixed ? "Fixed" : "Unfixed"}
+            </span>
+          </div>
+          <h2><a href={incidentPath(incident)}>{data.title}</a></h2>
+          <ul class="tags" aria-label="Affected components">
+            {data.affected.map((tag) => {
+              const slug = taxonomySlug(tag);
+              return (
+                <li>
+                  {affectedLinks.has(slug)
+                    ? <a href={`/affected/${slug}/`}>{tag}</a>
+                    : <span>{tag}</span>}
+                </li>
+              );
+            })}
+          </ul>
+        </article>
+      </li>
+    );
+  })}
+</ol>
+
+<style>
+  .incident-list {
+    list-style: none;
+    display: grid;
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .incident {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-card);
+    padding: 1rem 1.1rem;
+  }
+
+  .incident.severity-annoyance {
+    border-left-color: var(--color-annoyance);
+  }
+
+  .incident.severity-broken {
+    border-left-color: var(--color-broken);
+  }
+
+  .incident.severity-catastrophic {
+    border-left-color: var(--color-catastrophic);
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.65rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+
+  .severity,
+  .status {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.08rem 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.68rem;
+    font-weight: 700;
+  }
+
+  .severity-annoyance {
+    color: var(--color-annoyance);
+    background: var(--color-annoyance-bg);
+  }
+
+  .severity-broken {
+    color: var(--color-broken);
+    background: var(--color-broken-bg);
+  }
+
+  .severity-catastrophic {
+    color: var(--color-catastrophic);
+    background: var(--color-catastrophic-bg);
+  }
+
+  .fixed {
+    color: var(--color-safe);
+    background: var(--color-safe-bg);
+    border-color: var(--color-safe);
+  }
+
+  .unfixed {
+    color: var(--color-danger);
+    background: var(--color-danger-bg);
+    border-color: var(--color-danger);
+  }
+
+  h2 {
+    margin: 0.55rem 0 0;
+    font-family: var(--font-sans);
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+
+  h2 a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  h2 a:hover {
+    color: var(--color-link);
+    text-decoration: underline;
+  }
+
+  .tags {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0.65rem 0 0;
+    padding: 0;
+  }
+
+  .tags a,
+  .tags span {
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--border-subtle);
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    text-decoration: none;
+  }
+
+  .tags a:hover {
+    color: var(--color-link);
+    border-color: var(--color-link);
+  }
+</style>

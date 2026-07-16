@@ -1,0 +1,469 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection, render } from "astro:content";
+import Footer from "@/components/Footer.astro";
+import ArchiveLayout from "@/layouts/ArchiveLayout.astro";
+import { siteUrl } from "@/links";
+import {
+  incidentCanonicalUrl,
+  incidentPath,
+  incidentSlug,
+  relatedIncidents,
+  sourceLabel,
+} from "@/lib/incidents";
+import { incidentGitLastModified } from "@/lib/git-dates";
+import { taxonomySlug } from "@/lib/taxonomies";
+
+type Incident = CollectionEntry<"incidents">;
+
+export async function getStaticPaths() {
+  const incidents = await getCollection("incidents");
+  const affectedCounts = new Map<string, number>();
+
+  for (const item of incidents) {
+    for (const label of item.data.affected) {
+      const slug = taxonomySlug(label);
+      affectedCounts.set(slug, (affectedCounts.get(slug) ?? 0) + 1);
+    }
+  }
+  const linkedAffected = [...affectedCounts.entries()]
+    .filter(([, count]) => count >= 3)
+    .map(([slug]) => slug);
+
+  return incidents.map((incident) => ({
+    params: { slug: incidentSlug(incident) },
+    props: {
+      incident,
+      related: relatedIncidents(incident, incidents),
+      linkedAffected,
+    },
+  }));
+}
+
+interface Props {
+  incident: Incident;
+  related: Incident[];
+  linkedAffected: string[];
+}
+
+const { incident, related, linkedAffected } = Astro.props;
+const { Content } = await render(incident);
+const { data } = incident;
+
+const archiveUrl = siteUrl("archive");
+const canonicalUrl = incidentCanonicalUrl(incident);
+const displayDate = data.date.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+const displayFixDate = data.fixDate?.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+const isoDate = data.date.toISOString().split("T")[0];
+const contentFilename = incident.id.endsWith(".md")
+  ? incident.id
+  : `${incident.id}.md`;
+const contentPath = `src/content/incidents/${contentFilename}`;
+const gitModifiedDate = incidentGitLastModified(contentPath);
+const isoModifiedDate =
+  gitModifiedDate ?? (data.fixDate ?? data.date).toISOString();
+const displayModifiedDate = new Date(isoModifiedDate).toLocaleDateString(
+  "en-US",
+  {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }
+);
+const subject = data.kb ? `${data.kb} problems` : "Windows update problems";
+const pageTitle = `${subject}: ${data.title} | Microslop Broke Windows`;
+const description = `${data.kb ? `${data.kb}: ` : ""}${data.title}. Affected: ${data.affected.join(", ")}. Status: ${data.fixed ? "fixed" : "unfixed"}.`;
+
+const severityLabels = {
+  annoyance: "Annoyance",
+  broken: "Broken",
+  catastrophic: "Catastrophic",
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: data.kb ? `${data.kb}: ${data.title}` : data.title,
+  description,
+  datePublished: isoDate,
+  dateModified: isoModifiedDate,
+  mainEntityOfPage: canonicalUrl,
+  url: canonicalUrl,
+  author: {
+    "@type": "Organization",
+    name: "Microslop Broke Windows",
+    url: "https://microslopbroke.win/",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Microslop Broke Windows",
+    url: "https://microslopbroke.win/",
+  },
+  articleSection: "Windows update incidents",
+  keywords: [data.kb, ...data.affected].filter(Boolean).join(", "),
+  about: data.affected.map((name) => ({
+    "@type": "Thing",
+    name,
+  })),
+  citation: data.sources ?? [],
+  isPartOf: {
+    "@type": "CollectionPage",
+    name: "Windows Update Wall of Shame",
+    url: "https://microslopbroke.win/",
+  },
+};
+---
+
+<ArchiveLayout
+  title={pageTitle}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  ogType="article"
+  jsonLd={jsonLd}
+>
+  <main class="incident-page">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href={archiveUrl}>Wall of Shame</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{data.kb ?? "Incident"}</span>
+    </nav>
+
+    <article>
+      <header class={`incident-header severity-${data.severity}`}>
+        <div class="eyebrow">
+          <time datetime={isoDate}>{displayDate}</time>
+          {data.kb && <span>{data.kb}</span>}
+          <span class={`severity severity-${data.severity}`}>
+            {severityLabels[data.severity]}
+          </span>
+        </div>
+        <h1>{data.title}</h1>
+        <div class="tags" aria-label="Affected products and features">
+          {data.affected.map((item) =>
+            linkedAffected.includes(taxonomySlug(item)) ? (
+              <a class="tag" href={`/affected/${taxonomySlug(item)}/`}>{item}</a>
+            ) : (
+              <span class="tag">{item}</span>
+            )
+          )}
+        </div>
+      </header>
+
+      <section class="content-section">
+        <h2>What broke</h2>
+        <div class="prose">
+          <Content />
+        </div>
+      </section>
+
+      <section class="content-section metadata">
+        <h2>Incident details</h2>
+        <dl>
+          <div>
+            <dt>Update</dt>
+            <dd>{data.kb ?? "Not specified"}</dd>
+          </div>
+          <div>
+            <dt>Incident date</dt>
+            <dd>
+              <time datetime={isoDate}>{displayDate}</time>
+              {" · "}
+              <a href={`/years/${data.date.getUTCFullYear()}/`}>Browse that year</a>
+            </dd>
+          </div>
+          <div>
+            <dt>Status</dt>
+            <dd class={data.fixed ? "status-fixed" : "status-unfixed"}>
+              {data.fixed ? "Fixed" : "Unfixed"}
+            </dd>
+          </div>
+          {displayFixDate && data.fixDate && (
+            <div>
+              <dt>Fix date</dt>
+              <dd>
+                <time datetime={data.fixDate.toISOString().split("T")[0]}>
+                  {displayFixDate}
+                </time>
+              </dd>
+            </div>
+          )}
+          <div>
+            <dt>Page last updated</dt>
+            <dd>
+              <time datetime={isoModifiedDate}>
+                {displayModifiedDate}
+              </time>
+            </dd>
+          </div>
+          <div>
+            <dt>Severity</dt>
+            <dd>{severityLabels[data.severity]}</dd>
+          </div>
+          <div>
+            <dt>Affected</dt>
+            <dd>{data.affected.join(", ")}</dd>
+          </div>
+        </dl>
+      </section>
+
+      {data.sources && data.sources.length > 0 && (
+        <section class="content-section">
+          <h2>Sources</h2>
+          <ol class="sources">
+            {data.sources.map((url) => (
+              <li>
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                  {sourceLabel(url, incident)}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {related.length > 0 && (
+        <section class="content-section">
+          <h2>Related Windows update incidents</h2>
+          <ul class="related">
+            {related.map((item) => (
+              <li>
+                <a href={incidentPath(item)}>
+                  <span>{item.data.kb ?? "Windows update"}</span>
+                  {item.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </article>
+
+    <p class="back-link"><a href={archiveUrl}>&larr; Back to the full Wall of Shame</a></p>
+  </main>
+  <Footer currentSite="archive" />
+</ArchiveLayout>
+
+<style>
+  .incident-page {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  a {
+    color: var(--color-link);
+  }
+
+  .breadcrumbs a,
+  .back-link a {
+    text-decoration: none;
+  }
+
+  .breadcrumbs a:hover,
+  .back-link a:hover {
+    text-decoration: underline;
+  }
+
+  .incident-header {
+    padding: clamp(1.25rem, 4vw, 2rem);
+    border: 1px solid var(--border);
+    border-left: 4px solid;
+    border-radius: 8px;
+    background: var(--bg-card);
+  }
+
+  .incident-header.severity-annoyance {
+    border-left-color: var(--color-annoyance);
+  }
+
+  .incident-header.severity-broken {
+    border-left-color: var(--color-broken);
+  }
+
+  .incident-header.severity-catastrophic {
+    border-left-color: var(--color-catastrophic);
+  }
+
+  .eyebrow,
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .eyebrow {
+    margin-bottom: 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  h1 {
+    font-family: var(--font-sans);
+    font-size: clamp(1.75rem, 5vw, 2.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  .tags {
+    margin-top: 1rem;
+  }
+
+  .tag,
+  .severity {
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.75rem;
+  }
+
+  .tag {
+    background: var(--border-subtle);
+    color: var(--text-muted);
+  }
+
+  a.tag {
+    text-decoration: none;
+  }
+
+  a.tag:hover {
+    border-color: var(--color-link);
+    color: var(--color-link);
+  }
+
+  .severity {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .severity-annoyance {
+    color: var(--color-annoyance);
+    background: var(--color-annoyance-bg);
+  }
+
+  .severity-broken {
+    color: var(--color-broken);
+    background: var(--color-broken-bg);
+  }
+
+  .severity-catastrophic {
+    color: var(--color-catastrophic);
+    background: var(--color-catastrophic-bg);
+  }
+
+  .content-section {
+    margin-top: 2rem;
+  }
+
+  h2 {
+    margin-bottom: 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 1.15rem;
+  }
+
+  .prose {
+    font-family: var(--font-sans);
+    color: var(--text-muted);
+    line-height: 1.75;
+  }
+
+  .prose :global(p + p) {
+    margin-top: 1rem;
+  }
+
+  dl {
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-card);
+  }
+
+  dl div {
+    display: grid;
+    grid-template-columns: minmax(7rem, 0.35fr) 1fr;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  dl div + div {
+    border-top: 1px solid var(--border);
+  }
+
+  dt {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  dd {
+    font-family: var(--font-sans);
+  }
+
+  .status-fixed {
+    color: var(--color-safe);
+  }
+
+  .status-unfixed {
+    color: var(--color-danger);
+  }
+
+  .sources,
+  .related {
+    padding-left: 1.25rem;
+    font-family: var(--font-sans);
+    color: var(--text-muted);
+  }
+
+  .sources li + li,
+  .related li + li {
+    margin-top: 0.5rem;
+  }
+
+  .related a {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+  }
+
+  .related a:hover {
+    text-decoration: underline;
+  }
+
+  .related span {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .back-link {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 32rem) {
+    dl div {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+</style>

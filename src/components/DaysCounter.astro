@@ -1,5 +1,5 @@
 ---
-import { siteUrl } from "../links";
+import { siteUrl } from "@/links";
 
 interface Props {
   incidentDate: string;
@@ -9,6 +9,15 @@ interface Props {
 }
 
 const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = Astro.props;
+const buildToday = new Date();
+buildToday.setHours(0, 0, 0, 0);
+const initialDays = Math.max(
+  0,
+  Math.round(
+    (buildToday.getTime() - new Date(`${incidentDate}T00:00:00`).getTime()) /
+      86400000
+  )
+);
 ---
 
 <main class="page" data-incident-date={incidentDate}>
@@ -16,12 +25,14 @@ const { incidentDate, lastIncidentTitle, lastIncidentDate, lastIncidentKb } = As
 
   <div class="counter">
     <div class="number-ring">
-      <span class="number" data-counter></span>
+      <span class="number" data-counter>{initialDays}</span>
     </div>
   </div>
 
   <div class="details">
-    <p class="subtitle" data-subtitle></p>
+    <p class="subtitle" data-subtitle>
+      {initialDays} {initialDays === 1 ? "day" : "days"} since the last documented Windows update incident.
+    </p>
 
     <div class="last-incident">
       <p class="incident-meta">

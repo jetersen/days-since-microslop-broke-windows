@@ -1,0 +1,233 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import Footer from "@/components/Footer.astro";
+import TaxonomyIncidentList from "@/components/TaxonomyIncidentList.astro";
+import ArchiveLayout from "@/layouts/ArchiveLayout.astro";
+import { taxonomySlug } from "@/lib/taxonomies";
+
+export async function getStaticPaths() {
+  const incidents = await getCollection("incidents");
+  const byYear = new Map<string, CollectionEntry<"incidents">[]>();
+  const affectedCounts = new Map<string, number>();
+
+  for (const incident of incidents) {
+    const year = String(incident.data.date.getUTCFullYear());
+    const group = byYear.get(year) ?? [];
+    group.push(incident);
+    byYear.set(year, group);
+    for (const label of incident.data.affected) {
+      const slug = taxonomySlug(label);
+      affectedCounts.set(slug, (affectedCounts.get(slug) ?? 0) + 1);
+    }
+  }
+
+  const linkedAffected = [...affectedCounts.entries()]
+    .filter(([, count]) => count >= 3)
+    .map(([slug]) => slug);
+
+  return [...byYear.entries()].map(([year, yearIncidents]) => ({
+    params: { year },
+    props: {
+      incidents: yearIncidents.sort(
+        (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+      ),
+      allYears: [...byYear.keys()].sort((a, b) => Number(b) - Number(a)),
+      linkedAffected,
+    },
+  }));
+}
+
+interface Props {
+  incidents: CollectionEntry<"incidents">[];
+  allYears: string[];
+  linkedAffected: string[];
+}
+
+const { year } = Astro.params;
+const { incidents, allYears, linkedAffected } = Astro.props;
+const catastrophicCount = incidents.filter(
+  ({ data }) => data.severity === "catastrophic",
+).length;
+const affectedCounts = new Map<string, { label: string; count: number }>();
+
+for (const { data } of incidents) {
+  for (const label of data.affected) {
+    const slug = taxonomySlug(label);
+    const current = affectedCounts.get(slug);
+    affectedCounts.set(slug, {
+      label: current?.label ?? label,
+      count: (current?.count ?? 0) + 1,
+    });
+  }
+}
+
+const popularAffected = [...affectedCounts.entries()]
+  .filter(([, item]) => item.count >= 3)
+  .sort((a, b) => b[1].count - a[1].count || a[1].label.localeCompare(b[1].label))
+  .slice(0, 12);
+const title = `Windows Update Problems in ${year}: KB Issues and Known Bugs`;
+const description = `${incidents.length} documented Windows update problems from ${year}, including ${catastrophicCount} catastrophic incidents. Browse affected components, KB numbers, fixes, and known issues.`;
+const canonicalUrl = `https://microslopbroke.win/years/${year}/`;
+---
+
+<ArchiveLayout title={title} description={description} canonicalUrl={canonicalUrl}>
+  <main class="landing">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Archive</a><span aria-hidden="true">/</span><span>{year}</span>
+    </nav>
+
+    <header>
+      <p class="eyebrow">Windows update incident archive</p>
+      <h1>Windows Update Problems in {year}</h1>
+      <p class="intro">
+        This archive documents <strong>{incidents.length} Windows update incidents</strong>
+        reported in {year}, from disruptive bugs to system-breaking failures. Each entry
+        links to its KB number, affected Windows components, fix status, and sources.
+      </p>
+      <p class="summary">
+        {catastrophicCount} catastrophic · {incidents.filter(({ data }) => !data.fixed).length} still marked unfixed
+      </p>
+    </header>
+
+    <nav class="years" aria-label="Browse incidents by year">
+      {allYears.map((item) => (
+        <a href={`/years/${item}/`} aria-current={item === year ? "page" : undefined}>
+          {item}
+        </a>
+      ))}
+    </nav>
+
+    {popularAffected.length > 0 && (
+      <section class="component-nav" aria-labelledby="component-heading">
+        <h2 id="component-heading">Frequently affected in {year}</h2>
+        <ul>
+          {popularAffected.map(([slug, item]) => (
+            <li><a href={`/affected/${slug}/`}>{item.label} <span>{item.count}</span></a></li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section aria-labelledby="incidents-heading">
+      <h2 id="incidents-heading" class="section-title">Documented incidents</h2>
+      <TaxonomyIncidentList incidents={incidents} linkedAffected={linkedAffected} />
+    </section>
+  </main>
+  <Footer currentSite="archive" />
+</ArchiveLayout>
+
+<style>
+  .landing {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .breadcrumbs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  a {
+    color: var(--color-link);
+  }
+
+  header {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .eyebrow {
+    margin-bottom: 0.5rem;
+    color: var(--color-danger);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: clamp(1.6rem, 5vw, 2.6rem);
+    line-height: 1.15;
+  }
+
+  .intro {
+    max-width: 47rem;
+    margin-top: 1rem;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    line-height: 1.7;
+  }
+
+  .summary {
+    margin-top: 0.8rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .years {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: 1.5rem 0;
+  }
+
+  .years a {
+    padding: 0.3rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    text-decoration: none;
+  }
+
+  .years a[aria-current="page"],
+  .years a:hover {
+    border-color: var(--color-link);
+    color: var(--color-link);
+  }
+
+  .component-nav {
+    margin: 2rem 0 2.5rem;
+  }
+
+  .component-nav h2,
+  .section-title {
+    margin-bottom: 0.85rem;
+    font-size: 1rem;
+  }
+
+  .component-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .component-nav a {
+    display: inline-flex;
+    gap: 0.45rem;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    text-decoration: none;
+  }
+
+  .component-nav a:hover {
+    border-color: var(--color-link);
+    color: var(--color-link);
+  }
+
+  .component-nav span {
+    color: var(--text);
+    font-weight: 700;
+  }
+</style>

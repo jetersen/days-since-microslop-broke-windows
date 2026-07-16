@@ -1,29 +1,35 @@
 ---
-import "../styles/global.css";
+import "@/styles/global.css";
+import SeoHead from "@/components/SeoHead.astro";
 
 interface Props {
   title: string;
   description: string;
+  canonicalUrl?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const { title, description } = Astro.props;
+const {
+  title,
+  description,
+  canonicalUrl = "https://didmicroslopbreakwindows.today/",
+  jsonLd,
+} = Astro.props;
+const image = "https://didmicroslopbreakwindows.today/images/social-card.png";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://didmicroslopbreakwindows.today" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
+    <SeoHead
+      title={title}
+      description={description}
+      canonicalUrl={canonicalUrl}
+      siteName="Did Microslop Break Windows Today?"
+      sitemapPath="/sitemap.xml"
+      imageUrl={image}
+      jsonLd={jsonLd}
+    />
   </head>
   <body>
     <slot />

@@ -1,29 +1,39 @@
 ---
-import "../styles/global.css";
+import "@/styles/global.css";
+import SeoHead from "@/components/SeoHead.astro";
 
 interface Props {
   title: string;
   description: string;
+  canonicalUrl?: string;
+  image?: string;
+  ogType?: "website" | "article";
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const { title, description } = Astro.props;
+const {
+  title,
+  description,
+  canonicalUrl = "https://microslopbroke.win/",
+  image = "https://microslopbroke.win/images/social-card.png",
+  ogType = "website",
+  jsonLd,
+} = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://microslopbroke.win" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
+    <SeoHead
+      title={title}
+      description={description}
+      canonicalUrl={canonicalUrl}
+      siteName="Microslop Broke Windows"
+      sitemapPath="/sitemap-index.xml"
+      imageUrl={image}
+      ogType={ogType}
+      jsonLd={jsonLd}
+    />
   </head>
   <body>
     <slot />

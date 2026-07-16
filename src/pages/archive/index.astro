@@ -1,30 +1,53 @@
 ---
-import { getCollection, render } from "astro:content";
-import ArchiveLayout from "../../layouts/ArchiveLayout.astro";
-import IncidentCard from "../../components/IncidentCard.astro";
-import Footer from "../../components/Footer.astro";
+import { getCollection } from "astro:content";
+import ArchiveLayout from "@/layouts/ArchiveLayout.astro";
+import IncidentCard from "@/components/IncidentCard.astro";
+import Footer from "@/components/Footer.astro";
+import { incidentPath } from "@/lib/incidents";
 
 const incidents = await getCollection("incidents");
 const sorted = incidents.sort(
   (a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
 
-const rendered = await Promise.all(
-  sorted.map(async (incident) => {
-    const { Content } = await render(incident);
-    return { ...incident, Content };
-  })
-);
-
 const totalCount = incidents.length;
 const catastrophicCount = incidents.filter(
   (i) => i.data.severity === "catastrophic"
 ).length;
+const years = [...new Set(sorted.map((incident) => incident.data.date.getUTCFullYear()))]
+  .sort((a, b) => b - a);
+const title = "Broken Windows Updates: Microsoft KB Problems and Known Issues";
+const description = `${totalCount} sourced Windows update incidents, including broken features, boot failures, KB problems, known issues, and Microsoft fixes.`;
+const canonicalUrl = "https://microslopbroke.win/";
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Microslop Broke Windows",
+    alternateName: "Windows Update Wall of Shame",
+    url: canonicalUrl,
+    description,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: title,
+    url: canonicalUrl,
+    description,
+    numberOfItems: totalCount,
+    about: {
+      "@type": "Thing",
+      name: "Microsoft Windows update problems",
+    },
+  },
+];
 ---
 
 <ArchiveLayout
-  title="The Windows Update Wall of Shame"
-  description={`${totalCount} documented incidents of Microslop breaking Windows through updates. ${catastrophicCount} catastrophic.`}
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  jsonLd={jsonLd}
 >
   <main class="archive">
     <header class="header">
@@ -35,10 +58,20 @@ const catastrophicCount = incidents.filter(
       <p class="sub-tally">
         {catastrophicCount} catastrophic &middot; proudly documented
       </p>
+      <p class="intro">
+        A source-backed archive of Microsoft Windows updates that caused boot
+        failures, broken features, driver problems, data-access issues, and
+        other regressions. Open an incident for its KB number, affected
+        components, fix status, and supporting sources.
+      </p>
+      <nav class="archive-nav" aria-label="Browse the archive">
+        {years.map((year) => <a href={`/years/${year}/`}>{year}</a>)}
+        <a href="/about/">Methodology</a>
+      </nav>
     </header>
 
     <div class="timeline">
-      {rendered.map(({ data, Content }) => (
+      {sorted.map(({ id, data }) => (
         <IncidentCard
           title={data.title}
           date={data.date}
@@ -47,10 +80,8 @@ const catastrophicCount = incidents.filter(
           affected={data.affected}
           fixed={data.fixed}
           fixDate={data.fixDate}
-          sources={data.sources}
-        >
-          <Content />
-        </IncidentCard>
+          href={incidentPath({ id, data })}
+        />
       ))}
     </div>
 
@@ -97,6 +128,37 @@ const catastrophicCount = incidents.filter(
     font-size: 0.85rem;
     color: var(--text-muted);
     margin-top: 0.25rem;
+  }
+
+  .intro {
+    max-width: 42rem;
+    margin: 1.25rem auto 0;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .archive-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .archive-nav a {
+    padding: 0.25rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--color-link);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    text-decoration: none;
+  }
+
+  .archive-nav a:hover {
+    border-color: var(--color-link);
   }
 
   .timeline {
