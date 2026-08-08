@@ -9,6 +9,7 @@ const gitDates = incidentGitDates();
 
 export default defineConfig({
   site: archiveOrigin,
+  compressHTML: "jsx",
   integrations: [
     sitemap({
       filter: (page) => new URL(page).pathname.startsWith("/archive"),
