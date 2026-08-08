@@ -50,6 +50,8 @@ export function deployOutput(): AstroIntegration {
           cp(join(dist, "today/index.html"), join(today, "index.html")),
           cp(join(dist, "archive"), archive, { recursive: true }),
           cp(join(dist, "sitemap-index.xml"), join(archive, "sitemap-index.xml")),
+          // Some crawlers probe /sitemap.xml directly, so mirror the index there.
+          cp(join(dist, "sitemap-index.xml"), join(archive, "sitemap.xml")),
           ...sitemapFiles.map((name) =>
             cp(join(dist, name), join(archive, name)),
           ),
