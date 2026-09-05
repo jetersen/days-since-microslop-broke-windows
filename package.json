@@ -15,8 +15,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.7.3",
-    "astro": "^7.0.9",
-    "astro-compress": "^2.4.1"
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.1",
+    "astro-compress": "^2.4.3"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.0"
   }
 }
